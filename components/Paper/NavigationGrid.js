@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export default function NavigationGrid({
   totalQuestions,
@@ -6,12 +6,15 @@ export default function NavigationGrid({
   setCurrentQuestion,
   flags,
   freeFlow,
-  offset
+  offset,
+  attempted,
 }) {
+  console.log(attempted);
+  console.log(attempted?.includes(0));
   return (
     <div className="mt-4 border-blue-800 ">
       <h1 className="text-2xl mb-2 font-poppins">Navigate</h1>
-      <div className="grid grid-cols-2 xl:grid-cols-5 max-w-[100px] xl:max-w-[250px] ">
+      <div className="grid grid-cols-2 md:grid-cols-5 max-w-[100px] md:max-w-[250px] ">
         {[...Array(totalQuestions)].map((_, index) => (
           <div
             onClick={() =>
@@ -22,6 +25,8 @@ export default function NavigationGrid({
           ${
             currentQuestion === index
               ? "bg-blue-800 text-white"
+              : attempted?.includes(index)
+              ? "bg-green-500 text-white"
               : flags.includes(String(freeFlow ? index : index + offset))
               ? "bg-yellow-400 text-black"
               : "bg-white text-black hover:bg-zinc-300  "
