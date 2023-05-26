@@ -155,7 +155,7 @@ model SSA {
 model ObjectiveQuestion {
   oq_id String @id @default(uuid())
 
-  question       String
+  question       String @db.VarChar(10000)
   answers        String
   correct_answer String
   marks          Int
