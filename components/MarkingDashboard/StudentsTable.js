@@ -140,6 +140,7 @@ const StudentsTable = ({
   };
 
   const handleLockResult = () => {
+    if (!exam) return;
     if (exam.status === "Marked") {
       changeStatusTo("Result Locked", true);
     } else if (
@@ -180,8 +181,8 @@ const StudentsTable = ({
         // alert("Error while closing exam. Please try again later");
       });
   };
-
   useEffect(() => {
+    if (!exam) return;
     if (students_data) {
       setStudents(students_data);
 
@@ -248,7 +249,7 @@ const StudentsTable = ({
         changeStatusTo("Approved");
       }
     }
-  }, [students_data]);
+  }, [students_data, exam]);
 
   // if (noneAttempted) {
   //   return (
@@ -270,8 +271,12 @@ const StudentsTable = ({
         <thead>
           <tr className="bg-white text-black text-3xl font-normal font-sans">
             <th colSpan={5} className="px-4 py-2 text-center remove-col">
-              {exam.course.course_name} --- {exam.paper_name} (
-              <span className="text-red-600">{exam.status}</span>)
+              {exam?.course?.course_name && (
+                <>
+                  {exam.course.course_name} --- {exam.paper_name} (
+                  <span className="text-red-600">{exam.status}</span>)
+                </>
+              )}
             </th>
           </tr>
           <tr id="second-row" className="bg-blue-800 text-white font-medium ">
@@ -294,6 +299,8 @@ const StudentsTable = ({
                   ? "bg-red-200"
                   : index % 2 === 0
                   ? "bg-gray-100"
+                  : student.status === "Commented"
+                  ? "bg-blue-200"
                   : "bg-gray-200"
               }`}
             >
@@ -411,7 +418,7 @@ const StudentsTable = ({
       </table>
       {!isPrinter && (
         <div className="flex justify-end py-4 space-x-10 mt-10">
-          {exam.status === "Result Locked" && user.level === 1 && (
+          {exam.status === "Result Locked" && user.level >= 4 && (
             <button
               className={`bg-blue-800 hover:bg-blue-700 text-white text-lg py-3 px-4 rounded-md`}
               onClick={() => {
@@ -422,7 +429,7 @@ const StudentsTable = ({
               <MdShare className="ml-2 mb-0.5 inline" />
             </button>
           )}
-
+          {user.level >=4 && (
           <button
             className={`bg-blue-800 hover:bg-blue-700 text-white text-lg py-3 px-4 rounded-md`}
             onClick={handleExport}
@@ -430,6 +437,7 @@ const StudentsTable = ({
             Export to Excel
             <MdDownload className="ml-2 mb-0.5 inline" />
           </button>
+          )}
           {exam.status === "Approved" && (
             <button
               className={`bg-blue-800 hover:bg-blue-700 text-white text-lg py-3 px-4 rounded-md`}

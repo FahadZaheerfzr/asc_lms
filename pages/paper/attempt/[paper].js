@@ -33,16 +33,26 @@ export default function Paper() {
   };
 
   const getTimeCookie = () => {
-    if (document.cookie.includes(`${paper}-time`)) {
-      const timeLeft = document.cookie
-        .split(";")
-        .filter((item) => item.includes(`${paper}-time`))[0]
-        .split("=")[1];
-      setAttemptTime(timeLeft);
+    const studentIdCookie = document.cookie
+      .split(";")
+      .map((item) => item.trim())
+      .find((item) => item.startsWith("studentId="));
+  
+    if (studentIdCookie && studentIdCookie.includes(`studentId=${session.data.user.id}`)) {
+      if (document.cookie.includes(`${paper}-time`)) {
+        const timeLeft = document.cookie
+          .split(";")
+          .filter((item) => item.includes(`${paper}-time`))[0]
+          .split("=")[1];
+        setAttemptTime(timeLeft);
+      } else {
+        setAttemptTime(-100);
+      }
     } else {
       setAttemptTime(-100);
     }
   };
+  
 
   const fetchAttemptOrCreateAttempt = async () => {
     let getAttempt;
@@ -69,7 +79,6 @@ export default function Paper() {
       router.push("/student");
     }
   };
-
   const handleSolveObjective = async () => {
     setObjectiveSubmitModal(true);
   };
@@ -136,6 +145,21 @@ export default function Paper() {
   };
 
   useEffect(() => {
+    if (!paperDetails) {
+      // If paper details are not available and still loading
+      const timeout = setTimeout(() => {
+        // Reload the page after 10 seconds
+        window.location.reload();
+      }, 10000);
+
+      return () => {
+        // Cleanup the timeout when component unmounts or when paper details are fetched
+        clearTimeout(timeout);
+      };
+    }
+  }, [paperDetails]);
+
+  useEffect(() => {
     if (attemptTime === -100 && paperDetails) {
       setAttemptTime(paperDetails.duration * 60);
       return;
@@ -146,7 +170,8 @@ export default function Paper() {
         var now = new Date();
         now.setTime(now.getTime() + 1 * 3600 * 1000);
         document.cookie = `${paper}-time=${attemptTime}; expires=${now.toUTCString()}; path=/`;
-      }, 800);
+        document.cookie = `studentId=${session.data.user.id}; expires=${now.toUTCString()}; path=/`;
+      }, 1000);
     } else if (attemptTime <= 0 && attemptTime > -100 && attemptTime !== null) {
       console.log("attempt time is very high ", attemptTime);
       clearPaperFromLocal();
