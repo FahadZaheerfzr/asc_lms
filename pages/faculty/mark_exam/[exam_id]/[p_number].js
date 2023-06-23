@@ -48,34 +48,35 @@ const Index = () => {
   const fetchObjectiveAttempts = async () => {
     if (!objectiveQuestions) return;
     let questions = objectiveQuestions.map((question) => question.oq_id);
-    try{
+    try {
       setLoading(true);
-    const res = await axios.post(`/api/student/paper/oq/get_questions`, {
-      p_number: p_number,
-      questions: questions,
-    });
-    setObjectiveAnswers(res.data);
-    setLoading(false);
-    }catch(err){
+      const res = await axios.post(`/api/student/paper/oq/get_questions`, {
+        p_number: p_number,
+        questions: questions,
+      });
+      setObjectiveAnswers(res.data);
+      setLoading(false);
+    } catch (err) {
       alert("Something went wrong!")
       router.push(`/faculty/mark_exam/${exam_id}`);
     }
   };
 
   const fetchSubjectiveAttempts = async () => {
-    if(!subjectiveQuestions) return
+    console.log("subjective questions", subjectiveQuestions)
+    if (!subjectiveQuestions) return
     let question = subjectiveQuestions.map((question) => question.sq_id);
-    try{
+    try {
       setLoading(true);
-    const res = await axios.post("/api/paper/marking/get_student_attempts", {
-      question: question,
-      p_number: p_number,
-    });
-    console.log("subjective attempts fetched successfully", res.data);
+      const res = await axios.post("/api/paper/marking/get_student_attempts", {
+        question: question,
+        p_number: p_number,
+      });
+      console.log("subjective attempts fetched successfully", res.data);
 
-    setSubjectiveAnswers(res.data);
-    setLoading(false);
-    }catch(err){
+      setSubjectiveAnswers(res.data);
+      setLoading(false);
+    } catch (err) {
       alert("Something went wrong!")
       router.push(`/faculty/mark_exam/${exam_id}`);
     }
@@ -89,8 +90,8 @@ const Index = () => {
         },
       })
       .then((res) => {
-        console.log("paper details fetched successfully");
-        
+
+        console.log("paper details fetched successfully", res.data);
         setPaperDetails(res.data);
         setObjectiveQuestions(res.data.objective_questions);
         if (paperDetails.paper_type !== "Objective") {
@@ -112,9 +113,12 @@ const Index = () => {
   }, [exam_id, p_number, router]);
 
   useEffect(() => {
-    if(objectiveQuestions.length === 0 || subjectiveQuestions.length === 0) return
-    fetchObjectiveAttempts();
-    fetchSubjectiveAttempts();
+    if (objectiveQuestions.length !== 0) {
+      fetchObjectiveAttempts();
+    }
+    if (subjectiveQuestions.length !== 0) {
+      fetchSubjectiveAttempts();
+    }
 
   }, [objectiveQuestions, subjectiveQuestions]);
   return (

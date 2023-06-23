@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 
 export default async function handler(req, res) {
+  console.log("Calling this API")
 
   try {
     const {
