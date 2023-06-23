@@ -19,7 +19,6 @@ const StudentsTable = ({
   isPrinter = false,
 }) => {
   const [students, setStudents] = useState([]);
-
   const [classAverage, setClassAverage] = useState(null);
   const [highestMarks, setHighestMarks] = useState(null);
   const [lowestMarks, setLowestMarks] = useState(null);
@@ -371,7 +370,7 @@ const StudentsTable = ({
                 {student.status !== "Not Attempted" &&
                   exam.status !== "Result Locked" && (
                     <Link
-                      href={`/faculty/mark_exam/${exam?.paper_id}/${student.p_number}`}
+                      href={`/faculty/mark_exam/${exam_id}/${student.p_number}`}
                     >
                       <button className="bg-blue-800 hover:bg-blue-700 text-white py-2 px-2 text-sm rounded ">
                         Check Answers
